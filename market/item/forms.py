@@ -4,6 +4,15 @@ from django.core.exceptions import ValidationError
 
 INPUT_CLASSES='w-1/2 py-4 px-6 rounded-xl border'
 
+
+def validate_text(category_name):
+    category_name=category_name.lower()
+    exist_cat = Category.objects.all()
+    for catt in exist_cat:
+        if catt.name.lower()==category_name:
+            return True
+    return False
+
 class NewCatForm(forms.ModelForm):
     """class Meta:
         model=Category
