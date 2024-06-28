@@ -8,4 +8,5 @@ urlpatterns=[
     path('browse/',views.browse,name='browse'),
     path('<int:pk>/delete/',views.delete,name='delete'),
     path('<int:pk>/edit/',views.edit,name='edit'),
+    path('newcat/',views.newcat,name='newcat'),
 ]
