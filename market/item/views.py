@@ -1,8 +1,17 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from .models import *
 from .forms import *
+
+def validate_text(category_name):
+    category_name=category_name.lower()
+    exist_cat = Category.objects.all()
+    for catt in exist_cat:
+        if catt.name.lower()==category_name:
+            raise ValidationError('Category Already Exists!')
+            return redirect('dashboard:index')
 
 def browse(request):
     query = request.GET.get('query','')
@@ -20,10 +29,6 @@ def browse(request):
         'categories':categories,
         'category_id':int(category_id),
         } )
-
-
-
-
 
 def detail(request,pk):
     item = get_object_or_404(Item,pk=pk)
@@ -45,6 +50,28 @@ def new(request):
 
 
         return render(request,'item/form.html',{'form':form,'title':'New Item'})
+
+
+@login_required
+def newcat(request):
+    if(request.method=='POST'):
+        form = NewCatForm(request.POST)
+        if form.is_valid():
+            form.save()
+            #cattemp = form.save(commit=False)
+            #cattemp.save()
+            return redirect('dashboard:index')
+        else:
+            #form=NewCatForm()
+            return render(request,'item/newcat.html',{'form':form,'title':'Add New Category'})
+    else:
+        form = NewCatForm()
+        return render(request,'item/newcat.html',{'form':form,'title':'Add New Category'})
+            
+            
+
+
+
 
 @login_required
 def delete(request,pk):
@@ -68,3 +95,5 @@ def edit(request,pk):
 
 
         return render(request,'item/form.html',{'form':form,'title':'Edit Item'})
+    
+
